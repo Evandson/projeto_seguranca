@@ -7,7 +7,9 @@ package Logic;
 
 import Dao.AppSegDao;
 import Dao.JdbcAppSegDao;
+import Model.GeraHash;
 import Model.Usuario;
+import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,30 +29,55 @@ public class UserLogic implements Logica {
         
         Erro erros = new Erro();
 
-        Usuario usuario = new Usuario();
-        AppSegDao us = DaoFactory.createAppSegDao();
-        HttpSession session = request.getSession();
+        String access = request.getParameter("access");
 
-        usuario.setNome(request.getParameter("nome"));
-        usuario.setEmail(request.getParameter("email"));
-        usuario.setSenha(request.getParameter("senha"));
+        if (access.equals("cadUser")) {
 
-        us.verifyUser(usuario);
+            Usuario usuario = new Usuario();
+            AppSegDao us = DaoFactory.createAppSegDao();
+            HttpSession session = request.getSession();
 
-        if (JdbcAppSegDao.sessao == true) {
-            //usuario = us.lancarId(usuario);
+            usuario.setNome(request.getParameter("nome"));
+            usuario.setEmail(request.getParameter("email"));
+            usuario.setSenha(request.getParameter("senha"));
 
-            session.setAttribute("email", usuario);
+            us.verifyUser(usuario);
 
-            response.sendRedirect("index.jsp");
+            if (JdbcAppSegDao.sessao == true) {
+                //usuario = us.lancarId(usuario);
 
-        } else if (JdbcAppSegDao.sessao == false) {
-            erros.limpar();
-            erros.add("Email já cadastrado!");
-            request.setAttribute("mensagem", erros);
+                session.setAttribute("email", usuario);
 
-            RequestDispatcher rd = request.getRequestDispatcher("cadastro.jsp");
-            rd.forward(request, response);
+                response.sendRedirect("index.jsp");
+
+            } else if (JdbcAppSegDao.sessao == false) {
+                erros.limpar();
+                erros.add("Email já cadastrado!");
+                request.setAttribute("mensagem", erros);
+
+                RequestDispatcher rd = request.getRequestDispatcher("cadastro.jsp");
+                rd.forward(request, response);
+            }
+        }
+        
+        if (access.equals("cadHash")){
+            
+            GeraHash geraHash = new GeraHash();
+            AppSegDao gh = DaoFactory.createAppSegDao();
+
+            geraHash.setCodHash(request.getParameter("codHash"));
+            
+            gh.cadHash(geraHash);
+             
+            List<GeraHash> hashes = gh.getHashes();
+            
+            HttpSession session = request.getSession();
+            session.setAttribute("hashes", hashes);
+ 
+            response.sendRedirect("user/hashGenerate.jsp");
+            
+            //RequestDispatcher rd = request.getRequestDispatcher("user/hashGenerate.jsp");
+            //rd.forward(request, response);
         }
     }
 }

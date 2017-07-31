@@ -75,8 +75,8 @@
                                 </div>
                                 <!-- /widget-header -->
                                 <div class="widget-content">
-                                    <div class="shortcuts"> <a href="javascript:;" class="shortcut"><i class="shortcut-icon icon-list-alt"></i><span
-                                                class="shortcut-label">Criar Hash</span> </a><a href="javascript:;" class="shortcut"><i
+                                    <div class="shortcuts"> <a href="createHash.jsp" class="shortcut"><i class="shortcut-icon icon-list-alt"></i><span
+                                                class="shortcut-label">Criar Hash</span> </a><a href="javascript:" class="shortcut"><i
                                                 class="shortcut-icon icon-bookmark"></i><span class="shortcut-label">Criar/Verificar Certificados</span> </a><a href="javascript:;" class="shortcut"><i class="shortcut-icon icon-check"></i> <span class="shortcut-label">Assinatura/Verificação de Certificados</span> </a><a href="javascript:;" class="shortcut"> <i class="shortcut-icon icon-edit"></i><span class="shortcut-label">Gerenciar</span> </a>
                                     </div>
                                     <!-- /shortcuts --> 

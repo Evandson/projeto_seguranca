@@ -5,11 +5,14 @@
  */
 package Dao;
 
+import Model.GeraHash;
 import Model.Usuario;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.ConnectionFactory;
@@ -99,16 +102,53 @@ public class JdbcAppSegDao implements AppSegDao {
             PreparedStatement us = (PreparedStatement) connection.prepareStatement(SQL);
             us.setString(1, usuario.getEmail());
             ResultSet rs = us.executeQuery();
-                if (!rs.next()){
-                   System.out.println("Email não encontrado!");
-                   userRegister(usuario);
-                   sessao = true;
-                } else{
-                   System.out.println("Email encontrado!");
-                   sessao = false;
-                }
-            } catch (SQLException e) {     
+            if (!rs.next()) {
+                System.out.println("Email não encontrado!");
+                userRegister(usuario);
+                sessao = true;
+            } else {
+                System.out.println("Email encontrado!");
+                sessao = false;
+            }
+        } catch (SQLException e) {
         }
         return sessao;
-    } 
+    }
+
+    @Override
+    public void cadHash(GeraHash geraHash) {
+        try {
+            String SQL = "INSERT INTO hashes (codHash) VALUES (md5(?))";
+            PreparedStatement us = (PreparedStatement) connection.prepareStatement(SQL);
+
+            us.setString(1, geraHash.getCodHash());
+
+            us.executeUpdate();
+
+            us.close();
+            //connection.close();
+
+        } catch (Exception e) {
+        }
+    }
+
+    @Override
+    public List<GeraHash> getHashes() {
+        List<GeraHash> hashes = new ArrayList();
+        try {
+            String SQL = "SELECT codHash FROM hashes ORDER BY codigo DESC LIMIT 1";
+            PreparedStatement us = (PreparedStatement) connection.prepareStatement(SQL);
+            ResultSet rs = us.executeQuery();
+            GeraHash gr = new GeraHash();
+            while (rs.next()) {
+                gr.setCodHash(rs.getString("codHash"));
+
+                hashes.add(gr);
+            }
+            return hashes;
+        } catch (SQLException e) {
+            Logger.getLogger(AppSegDao.class.getName()).log(Level.SEVERE, null, e);
+            throw new RuntimeException("Falha ao Listar em AppSegDao");
+        }
+    }
 }
